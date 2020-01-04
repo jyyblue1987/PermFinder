@@ -133,5 +133,20 @@ void CPermFinderDlg::OnBnClickedBtnCalc()
 	m_editArrayData.GetWindowTextA(strData);	
 
 	int row = 0, col = 0;
-	int **x = parseInputData(strData, row, col);
+	BYTE **x = parseInputData(strData, row, col);
+
+	if( x == NULL )
+	{
+		MessageBox(_T("Input Data Error"), _T("Error"), MB_ICONERROR);
+		return;
+	}
+
+	CString ret = calcPath(x, row, col, 4);
+
+	m_editResult.SetWindowTextA(ret);
+
+	// Free Memeory
+	for(int i = 0; i < row; i++)
+		free(x[i]);
+	free(x);
 }
