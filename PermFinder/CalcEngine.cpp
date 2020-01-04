@@ -36,7 +36,7 @@ BYTE** parseInputData(CString &data, int &row, int &col)
 	for(int i = 0; i < row; i++ )
 	{
 		x[i] = (BYTE *) calloc(col, sizeof(BYTE));
-		char *val = v[0].GetBuffer(0);
+		char *val = v[i].GetBuffer(0);
 		for(int j = 0; j < col; j++)
 		{
 			x[i][j] = val[j] - 48;
@@ -221,8 +221,9 @@ CString calcPath(BYTE **x, int row, int col, int upto)
 
 		int max_len = calcBestPath(x, row, 1, perm_list, PERM_TOTAL_COUNT, max_perm_num_missed, k, MAX_PERM_COUNT);
 
-		ret += "\r\nDigits: " + k;
-		ret += "\r\n";
+		CString msg;
+		msg.Format("\r\n-Digits: %d\r\n", k);
+		ret += msg;
 
 		CString sub_ret;
 		int max_perm_count = 0;
@@ -234,20 +235,21 @@ CString calcPath(BYTE **x, int row, int col, int upto)
 
 			BYTE *p = perm_list + p_num * k;
 
-			sub_ret += "(";
+			sub_ret += "\r\n(";
 			for(j = 0; j < k; j++)
 			{
 				if( j > 0 )
 					sub_ret += ",";		
 
-				sub_ret += p[j];			
+				msg.Format("%d", p[j]);
+				sub_ret += msg;			
 			}
 
 			sub_ret += ")";
 
-			CString msg;
-			msg.Format("Height: %f\r\nMissing: %d",
-						(max_len / k), max_perm_num_missed[i * 2 + 1]
+			float fHeight = (float)max_len / k;
+			msg.Format("\r\nHeight: %f\r\nMissing: %d",
+						fHeight, max_perm_num_missed[i * 2 + 1]
 					);
 
 			sub_ret += msg;
@@ -255,8 +257,9 @@ CString calcPath(BYTE **x, int row, int col, int upto)
 			max_perm_count++;
 		}
 
-		ret = ret + ("Total Count: " + max_perm_count);
-		ret += "\r\n";
+		msg.Format("\r\nTotal Count: %d", max_perm_count);		
+		ret += msg;
+		ret += "\r\n\r\n";
 		ret += sub_ret;
 
 		ret += "\r\n";

@@ -54,6 +54,7 @@ BOOL CPermFinderDlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// Set small icon
 
 	// TODO: Add extra initialization here
+	m_editUpto.SetWindowTextA("5");
 
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
@@ -141,7 +142,14 @@ void CPermFinderDlg::OnBnClickedBtnCalc()
 		return;
 	}
 
-	CString ret = calcPath(x, row, col, 4);
+	CString buffer;
+	m_editUpto.GetWindowTextA(buffer);
+
+	int upto = _ttoi(buffer.GetBuffer(0));
+	if( upto < 1 )
+		upto = 4;
+
+	CString ret = calcPath(x, row, col, upto);
 
 	m_editResult.SetWindowTextA(ret);
 
