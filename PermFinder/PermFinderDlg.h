@@ -42,4 +42,6 @@ private:
 
 public:
 	afx_msg void OnBnClickedBtnCalc();
+	afx_msg void OnBnClickedBtnSave();
+	afx_msg void OnBnClickedBtnClose();
 };

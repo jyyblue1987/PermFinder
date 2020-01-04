@@ -39,6 +39,8 @@ BEGIN_MESSAGE_MAP(CPermFinderDlg, CDialogEx)
 	ON_WM_QUERYDRAGICON()
 	ON_BN_CLICKED(IDC_BTN_ARRAY, &CPermFinderDlg::OnBnClickedBtnArray)
 	ON_BN_CLICKED(IDC_BTN_CALC, &CPermFinderDlg::OnBnClickedBtnCalc)
+	ON_BN_CLICKED(IDC_BTN_SAVE, &CPermFinderDlg::OnBnClickedBtnSave)
+	ON_BN_CLICKED(IDC_BTN_CLOSE, &CPermFinderDlg::OnBnClickedBtnClose)
 END_MESSAGE_MAP()
 
 
@@ -118,7 +120,7 @@ void CPermFinderDlg::DisplayArrayData(CString path)
 void CPermFinderDlg::OnBnClickedBtnArray()
 {
 	const TCHAR szFilter[] = _T("Text Files (*.txt)|*.txt|All Files (*.*)|*.*||");
-	CFileDialog dlg(FALSE, _T("csv"), NULL, OFN_HIDEREADONLY, szFilter, this);    
+	CFileDialog dlg(TRUE, _T("txt"), NULL, OFN_HIDEREADONLY, szFilter, this);    
 	if(dlg.DoModal() == IDOK)
 	{
 		CString sFilePath = dlg.GetPathName();
@@ -157,4 +159,34 @@ void CPermFinderDlg::OnBnClickedBtnCalc()
 	for(int i = 0; i < row; i++)
 		free(x[i]);
 	free(x);
+}
+
+
+void CPermFinderDlg::OnBnClickedBtnSave()
+{
+	const TCHAR szFilter[] = _T("Text Files (*.txt)|*.txt|All Files (*.*)|*.*||");
+	CFileDialog dlg(FALSE, _T("csv"), NULL, OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, szFilter, this);    
+	if(dlg.DoModal() == IDOK)
+	{
+		CString sFilePath = dlg.GetPathName();
+		m_editSavePath.SetWindowText(sFilePath);
+
+		CString strResult;
+		m_editResult.GetWindowTextA(strResult);
+
+		CStdioFile file;
+
+		if(file.Open(sFilePath, CFile::modeCreate|CFile::modeWrite))
+		{
+			file.WriteString(strResult);
+		}
+		
+	}
+}
+
+
+void CPermFinderDlg::OnBnClickedBtnClose()
+{
+	// TODO: Add your control notification handler code here
+	OnOK();
 }

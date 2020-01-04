@@ -248,7 +248,7 @@ CString calcPath(BYTE **x, int row, int col, int upto)
 			sub_ret += ")";
 
 			float fHeight = (float)max_len / k;
-			msg.Format("\r\nHeight: %f\r\nMissing: %d",
+			msg.Format("\r\nHeight: %f\r\nMissing: %d\r\n",
 						fHeight, max_perm_num_missed[i * 2 + 1]
 					);
 
@@ -263,8 +263,7 @@ CString calcPath(BYTE **x, int row, int col, int upto)
 		ret += sub_ret;
 
 		ret += "\r\n";
-		ret += "\r\n";
-
+		
 		free(perm_list);
 	}
 
@@ -272,10 +271,10 @@ CString calcPath(BYTE **x, int row, int col, int upto)
 
 	long int  end = GetTickCount();
 
-	ret += "Total Time: ";
+	ret += "---Total Time: ";
 	float gap = (end - start) / 1000;
 	CString msg;
-	msg.Format("%1.2fms", gap);
+	msg.Format("%1.2fs", gap);
 	ret += msg;	
 
 	return ret;
