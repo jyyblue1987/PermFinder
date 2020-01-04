@@ -225,7 +225,7 @@ int calcBestPath1(BYTE **x, int b, int t, unsigned long long p_count, BYTE *max_
 	unsigned long long k = 0;
 	int val = 0;
 	int hist[4];
-	BYTE missed_value = -1;
+	BYTE missed_value = 255;
 
 	int max_len = 0;
 	int len = 0;
@@ -253,7 +253,7 @@ int calcBestPath1(BYTE **x, int b, int t, unsigned long long p_count, BYTE *max_
 			else
 			{
 				// main process
-
+				missed_value = 255;
 				for(i = b - 1, j = 0; i >= t - 1; i--, j++ )
 				{	
 					if( j % digit_count == 0 )
@@ -272,7 +272,7 @@ int calcBestPath1(BYTE **x, int b, int t, unsigned long long p_count, BYTE *max_
 						else if(hist[1] >= 1 && hist[2] >= 1 && hist[3] == 0 )
 							missed_value = 3;	 
 
-						if( missed_value < 0 ) // Breakdown
+						if( missed_value == 255 ) // Breakdown
 							break;		
 					}
 					else if( j < digit_count - 1 )
