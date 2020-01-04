@@ -121,105 +121,105 @@ void generatePermList1(unsigned  long  long &count, int perm_len, int max_number
 //			t: scan range (top) 
 //			p: permutation list
 //			p_count: permutation count
-int calcBestPath(BYTE **x, int b, int t, BYTE *p, unsigned long long p_count, int *max_perm_num_missed, int digit_count, int max_row_count)
-{
-	int i = 0, j = 0;
-	unsigned long long k = 0;
-	int val = 0;
-	BYTE *pp = NULL;
-	int hist[4];
-	int missed_value = -1;
-
-	int max_len = 0;
-	int len = 0;
-
-	int max_perm_count = 0;
-
-
-	for(k = 0; k < p_count; k++)
-	{
-		pp = p + k * digit_count;		
-		missed_value = -1;
-
-		//if( pp[0] == 13 && pp[1] == 13 && pp[2] == 13 )
-		//	pp[0] = 13;
-		for(i = b - 1, j = 0; i >= t - 1; i--, j++ )
-		{	
-			if( j % digit_count == 0 )
-				memset(hist, 0, 4 * sizeof(int));
-
-			val = x[i][pp[j % digit_count] - 1];
-			hist[val]++;
-
-			// check missed value
-			if( j == digit_count - 1 )	// 3
-			{
-				if(hist[1] == 0 && hist[2] >= 1 && hist[3] >= 1 )
-					missed_value = 1;
-				else if(hist[1] >= 1 && hist[2] == 0 && hist[3] >= 1 )
-					missed_value = 2;
-				else if(hist[1] >= 1 && hist[2] >= 1 && hist[3] == 0 )
-					missed_value = 3;	 
-
-				if( missed_value < 0 ) // Breakdown
-					break;		
-			}
-			else if( j < digit_count - 1 )
-			{
-
-			}
-			else	// 
-			{
-				if( hist[missed_value] > 0 ) // Breakdown														
-					break;
-
-				if( j % 3 == digit_count - 1 )
-				{
-					int breakdown_flag = 0;
-					for(int q = 1; q < 3; q++)
-					{
-						if( q == missed_value )
-							continue;
-
-						if( hist[q] == 0 )
-						{
-							breakdown_flag = 1;
-							break;
-						}
-					}
-
-					if( breakdown_flag == 1 )
-						break;
-				}
-			}
-
-			len = j + 1;
-		}
-
-		if( len > max_len )
-		{
-			memset(max_perm_num_missed, 0, 2 * max_row_count * sizeof(int));
-			max_perm_count = 0;
-
-			max_perm_num_missed[0] = k;
-			max_perm_num_missed[1] = missed_value;
-			max_perm_count++;
-
-			max_len = len;
-		}
-		else if( len >= max_len && len > 0 )
-		{
-			if( max_perm_count < max_row_count )
-			{
-				max_perm_num_missed[max_perm_count * 2] = k;
-				max_perm_num_missed[max_perm_count * 2 + 1] = missed_value;
-				max_perm_count++;
-			}
-		}
-	}
-
-	return max_len;
-}
+//int calcBestPath(BYTE **x, int b, int t, BYTE *p, unsigned long long p_count, int *max_perm_num_missed, int digit_count, int max_row_count)
+//{
+//	int i = 0, j = 0;
+//	unsigned long long k = 0;
+//	int val = 0;
+//	BYTE *pp = NULL;
+//	int hist[4];
+//	int missed_value = -1;
+//
+//	int max_len = 0;
+//	int len = 0;
+//
+//	int max_perm_count = 0;
+//
+//
+//	for(k = 0; k < p_count; k++)
+//	{
+//		pp = p + k * digit_count;		
+//		missed_value = -1;
+//
+//		//if( pp[0] == 13 && pp[1] == 13 && pp[2] == 13 )
+//		//	pp[0] = 13;
+//		for(i = b - 1, j = 0; i >= t - 1; i--, j++ )
+//		{	
+//			if( j % digit_count == 0 )
+//				memset(hist, 0, 4 * sizeof(int));
+//
+//			val = x[i][pp[j % digit_count] - 1];
+//			hist[val]++;
+//
+//			// check missed value
+//			if( j == digit_count - 1 )	// 3
+//			{
+//				if(hist[1] == 0 && hist[2] >= 1 && hist[3] >= 1 )
+//					missed_value = 1;
+//				else if(hist[1] >= 1 && hist[2] == 0 && hist[3] >= 1 )
+//					missed_value = 2;
+//				else if(hist[1] >= 1 && hist[2] >= 1 && hist[3] == 0 )
+//					missed_value = 3;	 
+//
+//				if( missed_value < 0 ) // Breakdown
+//					break;		
+//			}
+//			else if( j < digit_count - 1 )
+//			{
+//
+//			}
+//			else	// 
+//			{
+//				if( hist[missed_value] > 0 ) // Breakdown														
+//					break;
+//
+//				if( j % 3 == digit_count - 1 )
+//				{
+//					int breakdown_flag = 0;
+//					for(int q = 1; q < 3; q++)
+//					{
+//						if( q == missed_value )
+//							continue;
+//
+//						if( hist[q] == 0 )
+//						{
+//							breakdown_flag = 1;
+//							break;
+//						}
+//					}
+//
+//					if( breakdown_flag == 1 )
+//						break;
+//				}
+//			}
+//
+//			len = j + 1;
+//		}
+//
+//		if( len > max_len )
+//		{
+//			memset(max_perm_num_missed, 0, 2 * max_row_count * sizeof(int));
+//			max_perm_count = 0;
+//
+//			max_perm_num_missed[0] = k;
+//			max_perm_num_missed[1] = missed_value;
+//			max_perm_count++;
+//
+//			max_len = len;
+//		}
+//		else if( len >= max_len && len > 0 )
+//		{
+//			if( max_perm_count < max_row_count )
+//			{
+//				max_perm_num_missed[max_perm_count * 2] = k;
+//				max_perm_num_missed[max_perm_count * 2 + 1] = missed_value;
+//				max_perm_count++;
+//			}
+//		}
+//	}
+//
+//	return max_len;
+//}
 
 int calcBestPath1(BYTE **x, int b, int t, unsigned long long &p_count, BYTE *max_perm_num_missed, int digit_count, int max_number, int max_row_count)
 {
@@ -350,13 +350,13 @@ CString calcPath(BYTE **x, int row, int col, int upto)
 
 	int i = 0, j = 0, k = 0;
 
-	long int  start = GetTickCount();
+	DWORD  start = GetTickCount();
 
 	BYTE *max_perm_num_missed = (BYTE *) calloc(MAX_PERM_COUNT * (upto + 1), sizeof(BYTE));
 
 	for(k = 3; k <= upto; k++)
 	{
-		unsigned  long  long PERM_TOTAL_COUNT  = 1;
+		unsigned long long PERM_TOTAL_COUNT  = 1;
 
 		for(i = 0; i < k; i++)
 			PERM_TOTAL_COUNT *= col;
@@ -377,7 +377,7 @@ CString calcPath(BYTE **x, int row, int col, int upto)
 		for(i = 0; i < MAX_PERM_COUNT; i++)
 		{	
 			BYTE *p = max_perm_num_missed + i * (k + 1);
-			BYTE missed_value = max_perm_num_missed[i * (k + 1) + k];
+			BYTE missed_value = p[k];
 			if( missed_value < 1 )
 				break;
 
@@ -394,7 +394,7 @@ CString calcPath(BYTE **x, int row, int col, int upto)
 			sub_ret += ")";
 
 			msg.Format("\r\nMissing: %d\r\n",
-						max_perm_num_missed[i * 2 + 1]
+						missed_value
 					);
 
 			sub_ret += msg;
@@ -419,7 +419,7 @@ CString calcPath(BYTE **x, int row, int col, int upto)
 
 	free(max_perm_num_missed);
 
-	long int  end = GetTickCount();
+	DWORD  end = GetTickCount();
 
 	ret += "---Total Time: ";
 	float gap = (end - start) / 1000;
