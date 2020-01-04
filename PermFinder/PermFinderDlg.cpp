@@ -26,11 +26,17 @@ CPermFinderDlg::CPermFinderDlg(CWnd* pParent /*=NULL*/)
 void CPermFinderDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
+	DDX_Control(pDX, IDC_EDIT_ARRAY_PATH, m_editArrayPath);
+	DDX_Control(pDX, IDC_EDIT_SAVE_PATH, m_editSavePath);
+	DDX_Control(pDX, IDC_EDIT_ARRAY_DATA, m_editArrayData);
+	DDX_Control(pDX, IDC_EDIT_RESULT_DATA, m_editResult);
+	DDX_Control(pDX, IDC_EDIT_UP_TO, m_editUpto);
 }
 
 BEGIN_MESSAGE_MAP(CPermFinderDlg, CDialogEx)
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
+	ON_BN_CLICKED(IDC_BTN_ARRAY, &CPermFinderDlg::OnBnClickedBtnArray)
 END_MESSAGE_MAP()
 
 
@@ -86,3 +92,34 @@ HCURSOR CPermFinderDlg::OnQueryDragIcon()
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
+void CPermFinderDlg::DisplayArrayData(CString path)
+{
+	CStdioFile fp;
+	CString m_Buffer;
+	CString m_TempBuffer;
+
+	fp.Open(path, CFile::modeRead);
+
+	while (!feof (fp.m_pStream))
+	{
+		fp.ReadString( m_TempBuffer );
+		m_Buffer += m_TempBuffer;
+		m_Buffer += "\r\n";
+	}
+
+	fp.Close();
+
+	m_editArrayData.SetWindowText(m_Buffer);
+}
+
+void CPermFinderDlg::OnBnClickedBtnArray()
+{
+	const TCHAR szFilter[] = _T("Text Files (*.txt)|*.txt|All Files (*.*)|*.*||");
+	CFileDialog dlg(FALSE, _T("csv"), NULL, OFN_HIDEREADONLY, szFilter, this);    
+	if(dlg.DoModal() == IDOK)
+	{
+		CString sFilePath = dlg.GetPathName();
+		m_editArrayPath.SetWindowText(sFilePath);
+		DisplayArrayData(sFilePath);
+	}
+}

@@ -3,6 +3,7 @@
 //
 
 #pragma once
+#include "afxwin.h"
 
 
 // CPermFinderDlg dialog
@@ -28,4 +29,15 @@ protected:
 	afx_msg void OnPaint();
 	afx_msg HCURSOR OnQueryDragIcon();
 	DECLARE_MESSAGE_MAP()
+public:
+	afx_msg void OnBnClickedBtnArray();
+	CEdit m_editArrayPath;
+	CEdit m_editSavePath;
+	CEdit m_editArrayData;
+	CEdit m_editResult;
+	CEdit m_editUpto;
+
+private:
+	void DisplayArrayData(CString path);
+
 };
