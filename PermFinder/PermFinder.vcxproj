@@ -101,6 +101,7 @@
     <None Include="res\PermFinder.rc2" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CalcEngine.h" />
     <ClInclude Include="PermFinder.h" />
     <ClInclude Include="PermFinderDlg.h" />
     <ClInclude Include="Resource.h" />
@@ -108,6 +109,7 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="CalcEngine.cpp" />
     <ClCompile Include="PermFinder.cpp" />
     <ClCompile Include="PermFinderDlg.cpp" />
     <ClCompile Include="stdafx.cpp">

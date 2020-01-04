@@ -6,6 +6,7 @@
 #include "PermFinder.h"
 #include "PermFinderDlg.h"
 #include "afxdialogex.h"
+#include "CalcEngine.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -37,6 +38,7 @@ BEGIN_MESSAGE_MAP(CPermFinderDlg, CDialogEx)
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
 	ON_BN_CLICKED(IDC_BTN_ARRAY, &CPermFinderDlg::OnBnClickedBtnArray)
+	ON_BN_CLICKED(IDC_BTN_CALC, &CPermFinderDlg::OnBnClickedBtnCalc)
 END_MESSAGE_MAP()
 
 
@@ -122,4 +124,14 @@ void CPermFinderDlg::OnBnClickedBtnArray()
 		m_editArrayPath.SetWindowText(sFilePath);
 		DisplayArrayData(sFilePath);
 	}
+}
+
+
+void CPermFinderDlg::OnBnClickedBtnCalc()
+{
+	CString strData;
+	m_editArrayData.GetWindowTextA(strData);	
+
+	int row = 0, col = 0;
+	int **x = parseInputData(strData, row, col);
 }

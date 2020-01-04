@@ -40,4 +40,6 @@ public:
 private:
 	void DisplayArrayData(CString path);
 
+public:
+	afx_msg void OnBnClickedBtnCalc();
 };
