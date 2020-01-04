@@ -46,7 +46,7 @@ BYTE** parseInputData(CString &data, int &row, int &col)
 	return x;
 }
 
-void generatePermList(BYTE *perm_list, int level, int &count, int perm_len, int max_number)
+void generatePermList(BYTE *perm_list, int level, unsigned  long  long &count, int perm_len, int max_number)
 {
 	if( level == perm_len )
 	{
@@ -85,9 +85,10 @@ void generatePermList(BYTE *perm_list, int level, int &count, int perm_len, int 
 //			t: scan range (top) 
 //			p: permutation list
 //			p_count: permutation count
-int calcBestPath(BYTE **x, int b, int t, BYTE *p, int p_count, int *max_perm_num_missed, int digit_count, int max_row_count)
+int calcBestPath(BYTE **x, int b, int t, BYTE *p, unsigned long long p_count, int *max_perm_num_missed, int digit_count, int max_row_count)
 {
-	int i = 0, j = 0, k = 0;
+	int i = 0, j = 0;
+	unsigned long long k = 0;
 	int val = 0;
 	BYTE *pp = NULL;
 	int hist[4];
@@ -195,12 +196,12 @@ CString calcPath(BYTE **x, int row, int col, int upto)
 
 	for(k = 3; k <= upto; k++)
 	{
-		int PERM_TOTAL_COUNT  = 1;
+		unsigned  long  long PERM_TOTAL_COUNT  = 1;
 
 		for(i = 0; i < k; i++)
 			PERM_TOTAL_COUNT *= col;
 
-		size_t size_len = PERM_TOTAL_COUNT * k;
+		unsigned  long  long size_len = PERM_TOTAL_COUNT * k;
 
 		BYTE *perm_list = (BYTE*)calloc(size_len, sizeof(BYTE));
 		if( perm_list == NULL )
@@ -213,7 +214,7 @@ CString calcPath(BYTE **x, int row, int col, int upto)
 		}
 
 		// generate possible permutation list
-		int count = 0;
+		unsigned  long  long count = 0;
 		generatePermList(perm_list, 0, count, k, col);
 
 		// initialize result buffer
