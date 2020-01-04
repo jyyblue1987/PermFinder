@@ -247,9 +247,8 @@ CString calcPath(BYTE **x, int row, int col, int upto)
 
 			sub_ret += ")";
 
-			float fHeight = (float)max_len / k;
-			msg.Format("\r\nHeight: %f\r\nMissing: %d\r\n",
-						fHeight, max_perm_num_missed[i * 2 + 1]
+			msg.Format("\r\nMissing: %d\r\n",
+						max_perm_num_missed[i * 2 + 1]
 					);
 
 			sub_ret += msg;
@@ -257,9 +256,16 @@ CString calcPath(BYTE **x, int row, int col, int upto)
 			max_perm_count++;
 		}
 
+		msg.Format("\r\nMax Length: %d", max_len);		
+		ret += msg;
+
+		float fHeight = (float)max_len / k;
+		msg.Format("\r\nHeight: %1.2f", fHeight );
+		ret += msg;
+
 		msg.Format("\r\nTotal Count: %d", max_perm_count);		
 		ret += msg;
-		ret += "\r\n\r\n";
+		ret += "\r\n";
 		ret += sub_ret;
 
 		ret += "\r\n";
