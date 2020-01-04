@@ -76,6 +76,8 @@ void generatePermList1(unsigned  long  long &count, int perm_len, int max_number
 	int i = 0;
 	for(i = 0; i < perm_len; i++)
 		data[i] = 1;
+
+	data[perm_len - 1] = 0;
 	
 	while(true)
 	{
@@ -219,7 +221,7 @@ int calcBestPath(BYTE **x, int b, int t, BYTE *p, unsigned long long p_count, in
 	return max_len;
 }
 
-int calcBestPath1(BYTE **x, int b, int t, unsigned long long p_count, BYTE *max_perm_num_missed, int digit_count, int max_number, int max_row_count)
+int calcBestPath1(BYTE **x, int b, int t, unsigned long long &p_count, BYTE *max_perm_num_missed, int digit_count, int max_number, int max_row_count)
 {
 	int i = 0, j = 0;
 	unsigned long long k = 0;
@@ -359,15 +361,11 @@ CString calcPath(BYTE **x, int row, int col, int upto)
 		for(i = 0; i < k; i++)
 			PERM_TOTAL_COUNT *= col;
 
-		unsigned  long  long size_len = PERM_TOTAL_COUNT * k;
-
-		// generate possible permutation list
-		unsigned  long  long count = 0;
-		//generatePermList(perm_list, 0, count, k, col);
-
 		// initialize result buffer
 		memset(max_perm_num_missed, 0, MAX_PERM_COUNT * (k + 1) * sizeof(BYTE));
 
+		// generate possible permutation list
+		unsigned  long  long count = 0;
 		int max_len = calcBestPath1(x, row, 1, count, max_perm_num_missed, k, col, MAX_PERM_COUNT);
 
 		CString msg;
