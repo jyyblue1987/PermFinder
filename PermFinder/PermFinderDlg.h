@@ -39,9 +39,12 @@ public:
 
 private:
 	void DisplayArrayData(CString path);
+	CString ReadLastString(CString path);
 
 public:
 	afx_msg void OnBnClickedBtnCalc();
 	afx_msg void OnBnClickedBtnSave();
 	afx_msg void OnBnClickedBtnClose();
+	CEdit m_editFeederPath;
+	afx_msg void OnBnClickedBtnFeederBrowser();
 };

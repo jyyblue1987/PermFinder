@@ -32,6 +32,7 @@ void CPermFinderDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_EDIT_ARRAY_DATA, m_editArrayData);
 	DDX_Control(pDX, IDC_EDIT_RESULT_DATA, m_editResult);
 	DDX_Control(pDX, IDC_EDIT_UP_TO, m_editUpto);
+	DDX_Control(pDX, IDC_EDIT_FEEDER_PATH, m_editFeederPath);
 }
 
 BEGIN_MESSAGE_MAP(CPermFinderDlg, CDialogEx)
@@ -41,6 +42,7 @@ BEGIN_MESSAGE_MAP(CPermFinderDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BTN_CALC, &CPermFinderDlg::OnBnClickedBtnCalc)
 	ON_BN_CLICKED(IDC_BTN_SAVE, &CPermFinderDlg::OnBnClickedBtnSave)
 	ON_BN_CLICKED(IDC_BTN_CLOSE, &CPermFinderDlg::OnBnClickedBtnClose)
+	ON_BN_CLICKED(IDC_BTN_FEEDER_BROWSER, &CPermFinderDlg::OnBnClickedBtnFeederBrowser)
 END_MESSAGE_MAP()
 
 
@@ -117,6 +119,23 @@ void CPermFinderDlg::DisplayArrayData(CString path)
 	m_editArrayData.SetWindowText(m_Buffer);
 }
 
+CString CPermFinderDlg::ReadLastString(CString path)
+{
+	CStdioFile fp;
+	CString m_Buffer;
+	
+	fp.Open(path, CFile::modeRead);
+
+	while (!feof (fp.m_pStream))
+	{
+		fp.ReadString( m_Buffer );
+	}
+
+	fp.Close();
+
+	return m_Buffer;
+}
+
 void CPermFinderDlg::OnBnClickedBtnArray()
 {
 	const TCHAR szFilter[] = _T("Text Files (*.txt)|*.txt|All Files (*.*)|*.*||");
@@ -134,6 +153,19 @@ void CPermFinderDlg::OnBnClickedBtnCalc()
 {
 	CString strData;
 	m_editArrayData.GetWindowTextA(strData);	
+	
+	CString strFeedPath;
+	m_editFeederPath.GetWindowTextA(strFeedPath);
+	if( strFeedPath.IsEmpty() == FALSE )
+	{
+		// read last string
+		CString last_row = ReadLastString(strFeedPath);				
+		strData += "\r\n";
+		strData += last_row;
+		strData.Replace("\r\n\r\n", "\r\n");
+
+		m_editArrayData.SetWindowTextA(strData);
+	}
 
 	int row = 0, col = 0;
 	BYTE **x = parseInputData(strData, row, col);
@@ -189,4 +221,16 @@ void CPermFinderDlg::OnBnClickedBtnClose()
 {
 	// TODO: Add your control notification handler code here
 	OnOK();
+}
+
+
+void CPermFinderDlg::OnBnClickedBtnFeederBrowser()
+{
+	const TCHAR szFilter[] = _T("Text Files (*.txt)|*.txt|All Files (*.*)|*.*||");
+	CFileDialog dlg(TRUE, _T("txt"), NULL, OFN_HIDEREADONLY, szFilter, this);    
+	if(dlg.DoModal() == IDOK)
+	{
+		CString sFilePath = dlg.GetPathName();
+		m_editFeederPath.SetWindowText(sFilePath);		
+	}
 }
