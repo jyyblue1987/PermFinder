@@ -190,6 +190,8 @@ void CPermFinderDlg::OnBnClickedBtnCalc()
 
 	m_editResult.SetWindowTextA(ret);
 
+	SaveResult();
+
 	// Free Memeory
 	for(int i = 0; i < row; i++)
 		free(x[i]);
@@ -205,17 +207,6 @@ void CPermFinderDlg::OnBnClickedBtnSave()
 	{
 		CString sFilePath = dlg.GetPathName();
 		m_editSavePath.SetWindowText(sFilePath);
-
-		CString strResult;
-		m_editResult.GetWindowTextA(strResult);
-
-		CStdioFile file;
-
-		if(file.Open(sFilePath, CFile::modeCreate|CFile::modeWrite))
-		{
-			file.WriteString(strResult);
-		}
-		
 	}
 }
 
@@ -284,9 +275,30 @@ void CPermFinderDlg::OnBnClickedBtnCalcTesting()
 
 	m_editResult.SetWindowTextA(ret);
 
-
+	SaveResult();
+	
 	// Free Memeory
 	for(int i = 0; i < row; i++)
 		free(x[i]);
 	free(x);
+}
+
+void CPermFinderDlg::SaveResult()
+{
+	CString strResult;
+	m_editResult.GetWindowTextA(strResult);
+
+	CString path;
+	m_editSavePath.GetWindowText(path);
+
+	if( strResult.IsEmpty() || path.IsEmpty() )
+		return;
+
+
+	CStdioFile file;
+
+	if(file.Open(path, CFile::modeCreate|CFile::modeWrite))
+	{
+		file.WriteString(strResult);
+	}
 }
