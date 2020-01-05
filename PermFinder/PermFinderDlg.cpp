@@ -297,8 +297,10 @@ void CPermFinderDlg::SaveResult()
 
 	CStdioFile file;
 
-	if(file.Open(path, CFile::modeCreate|CFile::modeWrite))
+	if(file.Open(path, CFile::modeCreate|CFile::modeWrite|CFile::modeNoTruncate))
 	{
+		file.SeekToEnd();
 		file.WriteString(strResult);
+		file.Close();
 	}
 }

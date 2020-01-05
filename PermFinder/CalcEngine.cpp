@@ -301,7 +301,7 @@ CString calcPathTesting(BYTE **x, int row, int col, int start_row, int upto)
 
 	for(k = 3; k <= upto; k++)
 	{
-		memset(hist, 0, (row + 1) * sizeof(BYTE));
+		memset(hist, 0, (row + 1) * sizeof(int));
 
 		ret += "-----------------------------------------------------------------------\r\n";
 		msg.Format("%d-plets", k);
