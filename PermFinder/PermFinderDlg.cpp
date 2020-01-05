@@ -42,7 +42,8 @@ BEGIN_MESSAGE_MAP(CPermFinderDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BTN_CALC, &CPermFinderDlg::OnBnClickedBtnCalc)
 	ON_BN_CLICKED(IDC_BTN_SAVE, &CPermFinderDlg::OnBnClickedBtnSave)
 	ON_BN_CLICKED(IDC_BTN_CLOSE, &CPermFinderDlg::OnBnClickedBtnClose)
-	ON_BN_CLICKED(IDC_BTN_FEEDER_BROWSER, &CPermFinderDlg::OnBnClickedBtnFeederBrowser)
+	ON_BN_CLICKED(IDC_BTN_FEEDER_BROWSER, &CPermFinderDlg::OnBnClickedBtnFeederBrowser)	
+	ON_BN_CLICKED(IDC_BTN_CALC_TESTING, &CPermFinderDlg::OnBnClickedBtnCalcTesting)
 END_MESSAGE_MAP()
 
 
@@ -99,13 +100,14 @@ HCURSOR CPermFinderDlg::OnQueryDragIcon()
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
-void CPermFinderDlg::DisplayArrayData(CString path)
+CString CPermFinderDlg::GetArrayData(CString path)
 {
 	CStdioFile fp;
 	CString m_Buffer;
 	CString m_TempBuffer;
 
-	fp.Open(path, CFile::modeRead);
+	if( fp.Open(path, CFile::modeRead) == FALSE )
+		return "";
 
 	while (!feof (fp.m_pStream))
 	{
@@ -116,7 +118,7 @@ void CPermFinderDlg::DisplayArrayData(CString path)
 
 	fp.Close();
 
-	m_editArrayData.SetWindowText(m_Buffer);
+	return m_Buffer;
 }
 
 CString CPermFinderDlg::ReadLastString(CString path)
@@ -144,7 +146,8 @@ void CPermFinderDlg::OnBnClickedBtnArray()
 	{
 		CString sFilePath = dlg.GetPathName();
 		m_editArrayPath.SetWindowText(sFilePath);
-		DisplayArrayData(sFilePath);
+		CString result = GetArrayData(sFilePath);
+		m_editArrayData.SetWindowTextA(result);
 	}
 }
 
@@ -233,4 +236,57 @@ void CPermFinderDlg::OnBnClickedBtnFeederBrowser()
 		CString sFilePath = dlg.GetPathName();
 		m_editFeederPath.SetWindowText(sFilePath);		
 	}
+}
+
+void CPermFinderDlg::OnBnClickedBtnCalcTesting()
+{
+	CString strData;
+	m_editArrayData.GetWindowTextA(strData);	
+
+	int row1 = 0, col1 = 0;
+	BYTE **x = parseInputData(strData, row1, col1);
+
+	if( x == NULL )
+	{
+		MessageBox(_T("Input Data Error"), _T("Error"), MB_ICONERROR);
+		return;
+	}
+
+	// Free Memeory
+	for(int i = 0; i < row1; i++)
+		free(x[i]);
+	free(x);
+
+	CString strFeedPath;
+	m_editFeederPath.GetWindowTextA(strFeedPath);
+	CString strFeedData = GetArrayData(strFeedPath);
+
+	CString totalData = strData + "\r\n" + strFeedData;
+	totalData.Replace("\r\n\r\n", "\r\n");
+
+	int row = 0, col = 0;
+	x = parseInputData(totalData, row, col);
+
+	if( x == NULL )
+	{
+		MessageBox(_T("Input Data Error"), _T("Error"), MB_ICONERROR);
+		return;
+	}
+
+	CString buffer;
+	m_editUpto.GetWindowTextA(buffer);
+
+	int upto = _ttoi(buffer.GetBuffer(0));
+	if( upto < 1 )
+		upto = 4;
+
+	CString ret = calcPathTesting(x, row, col, row1, upto);
+
+	m_editResult.SetWindowTextA(ret);
+
+
+	// Free Memeory
+	for(int i = 0; i < row; i++)
+		free(x[i]);
+	free(x);
 }

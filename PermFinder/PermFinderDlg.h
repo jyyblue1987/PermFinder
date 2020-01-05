@@ -38,7 +38,7 @@ public:
 	CEdit m_editUpto;
 
 private:
-	void DisplayArrayData(CString path);
+	CString GetArrayData(CString path);
 	CString ReadLastString(CString path);
 
 public:
@@ -47,4 +47,5 @@ public:
 	afx_msg void OnBnClickedBtnClose();
 	CEdit m_editFeederPath;
 	afx_msg void OnBnClickedBtnFeederBrowser();
+	afx_msg void OnBnClickedBtnCalcTesting();
 };
