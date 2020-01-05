@@ -254,57 +254,31 @@ int calcBestPath1(BYTE **x, int b, int t, unsigned long long &p_count, BYTE *max
 				pos++;
 			else
 			{
+				if( pp[0] == 6 && pp[1] == 2 && pp[2] == 11 )
+					pp[0] = 6;
+
 				// main process
 				missed_value = 255;
+				memset(hist, 0, 4 * sizeof(int));
 				for(i = b - 1, j = 0; i >= t - 1; i--, j++ )
 				{	
-					if( j % digit_count == 0 )
-						memset(hist, 0, 4 * sizeof(int));
-
 					val = x[i][pp[j % digit_count] - 1];
 					hist[val]++;
 
-					// check missed value
-					if( j == digit_count - 1 )	// 3
+					BYTE bin_value = 255;
+					for(int q = 1; q <= 3; q++)
 					{
-						if(hist[1] == 0 && hist[2] >= 1 && hist[3] >= 1 )
-							missed_value = 1;
-						else if(hist[1] >= 1 && hist[2] == 0 && hist[3] >= 1 )
-							missed_value = 2;
-						else if(hist[1] >= 1 && hist[2] >= 1 && hist[3] == 0 )
-							missed_value = 3;	 
-
-						if( missed_value == 255 ) // Breakdown
-							break;		
-					}
-					else if( j < digit_count - 1 )
-					{
-
-					}
-					else	// 
-					{
-						if( hist[missed_value] > 0 ) // Breakdown														
-							break;
-
-						if( j % 3 == digit_count - 1 )
+						if( hist[q] == 0 )
 						{
-							int breakdown_flag = 0;
-							for(int q = 1; q < 3; q++)
-							{
-								if( q == missed_value )
-									continue;
-
-								if( hist[q] == 0 )
-								{
-									breakdown_flag = 1;
-									break;
-								}
-							}
-
-							if( breakdown_flag == 1 )
-								break;
+							bin_value = q;
+							break;
 						}
 					}
+
+					if( bin_value == 255 )
+						break;
+
+					missed_value = bin_value;
 
 					len = j + 1;
 				}
