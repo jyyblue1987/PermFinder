@@ -225,7 +225,7 @@ CString calcPath(BYTE **x, int row, int col, int upto)
 		int max_len = calcBestPath1(x, row, 1, count, max_perm_num_missed, k, col, MAX_PERM_COUNT);
 
 		CString msg;
-		msg.Format("\r\n-Digits: %d\r\n", k);
+		msg.Format("------------------------------------------------------------\r\n-Digits: %d\r\n", k);
 		ret += msg;
 
 		CString sub_ret;
@@ -303,7 +303,7 @@ CString calcPathTesting(BYTE **x, int row, int col, int start_row, int upto)
 	{
 		memset(hist, 0, (row + 1) * sizeof(BYTE));
 
-		ret += "---------------------\r\n";
+		ret += "-----------------------------------------------------------------------\r\n";
 		msg.Format("%d-plets", k);
 		ret += msg;
 
