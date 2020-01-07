@@ -210,7 +210,7 @@ CString calcPath(BYTE **x, int row, int col, int upto)
 
 	BYTE *max_perm_num_missed = (BYTE *) calloc(MAX_PERM_COUNT * (upto + 1), sizeof(BYTE));
 
-	for(k = 3; k <= upto; k++)
+	for(k = upto; k >= 3; k--)
 	{
 		unsigned long long PERM_TOTAL_COUNT  = 1;
 

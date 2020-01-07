@@ -8,6 +8,8 @@
 #include "afxdialogex.h"
 #include "CalcEngine.h"
 
+using namespace std;
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -102,40 +104,79 @@ HCURSOR CPermFinderDlg::OnQueryDragIcon()
 
 CString CPermFinderDlg::GetArrayData(CString path)
 {
-	CStdioFile fp;
 	CString m_Buffer;
-	CString m_TempBuffer;
 
-	if( fp.Open(path, CFile::modeRead) == FALSE )
+	FILE *f = fopen(path, "r");
+	if( f == NULL )
 		return "";
 
-	while (!feof (fp.m_pStream))
-	{
-		fp.ReadString( m_TempBuffer );
-		m_Buffer += m_TempBuffer;
-		m_Buffer += "\r\n";
-	}
+	int c, pos = 0;
+	int size = 1024;
+	int line_count = 0;
+	char *buffer = (char *)malloc(size);
 
-	fp.Close();
+	do { // read all lines in file
+		pos = 0;
+		do{ // read one line
+			c = fgetc(f);
+			if(c != EOF) buffer[pos++] = (char)c;
+			if(pos >= size - 1) { // increase buffer length - leave room for 0
+				size *=2;
+				buffer = (char*)realloc(buffer, size);
+			}
+		} while(c != EOF && c != '\n' && c != '\r' );
+		buffer[pos] = 0;
+
+		// line is now in buffer
+		if( line_count > 0 )
+			m_Buffer += "\r\n";
+
+		m_Buffer += buffer;		
+		line_count++;
+	} while(c != EOF); 
+	fclose(f);           
+
+	free(buffer);
 
 	return m_Buffer;
 }
 
 CString CPermFinderDlg::ReadLastString(CString path)
-{
-	CStdioFile fp;
+{	
 	CString m_Buffer;
-	
-	fp.Open(path, CFile::modeRead);
 
-	while (!feof (fp.m_pStream))
-	{
-		fp.ReadString( m_Buffer );
-	}
+	FILE *f = fopen(path, "r");
+	if( f == NULL )
+		return "";
 
-	fp.Close();
+	int c, pos = 0;
+	int size = 1024;
+	int line_count = 0;
+	char *buffer = (char *)malloc(size);
+
+	do { // read all lines in file
+		pos = 0;
+		do{ // read one line
+			c = fgetc(f);
+			if(c != EOF) buffer[pos++] = (char)c;
+			if(pos >= size - 1) { // increase buffer length - leave room for 0
+				size *=2;
+				buffer = (char*)realloc(buffer, size);
+			}
+		} while(c != EOF && c != '\n' && c != '\r' );
+		buffer[pos] = 0;
+
+		m_Buffer = "";
+		m_Buffer += buffer;		
+		
+	} while(c != EOF); 
+
+	fclose(f);           
+
+	free(buffer);
 
 	return m_Buffer;
+
 }
 
 void CPermFinderDlg::OnBnClickedBtnArray()
