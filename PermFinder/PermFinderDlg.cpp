@@ -131,6 +131,9 @@ CString CPermFinderDlg::GetArrayData(CString path)
 		if( line_count > 0 )
 			m_Buffer += "\r\n";
 
+		if( strlen(buffer) < 1 )
+			continue;
+
 		m_Buffer += buffer;		
 		line_count++;
 	} while(c != EOF); 
@@ -165,6 +168,9 @@ CString CPermFinderDlg::ReadLastString(CString path)
 			}
 		} while(c != EOF && c != '\n' && c != '\r' );
 		buffer[pos] = 0;
+
+		if( strlen(buffer) < 1 )
+			continue;
 
 		m_Buffer = "";
 		m_Buffer += buffer;		
