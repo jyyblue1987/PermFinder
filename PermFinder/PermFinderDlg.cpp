@@ -46,6 +46,7 @@ BEGIN_MESSAGE_MAP(CPermFinderDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BTN_CLOSE, &CPermFinderDlg::OnBnClickedBtnClose)
 	ON_BN_CLICKED(IDC_BTN_FEEDER_BROWSER, &CPermFinderDlg::OnBnClickedBtnFeederBrowser)	
 	ON_BN_CLICKED(IDC_BTN_CALC_TESTING, &CPermFinderDlg::OnBnClickedBtnCalcTesting)
+	ON_BN_CLICKED(IDC_BTN_CALC_COMPACT, &CPermFinderDlg::OnBnClickedBtnCalcCompact)
 END_MESSAGE_MAP()
 
 
@@ -350,4 +351,50 @@ void CPermFinderDlg::SaveResult()
 		file.WriteString(strResult);
 		file.Close();
 	}
+}
+
+void CPermFinderDlg::OnBnClickedBtnCalcCompact()
+{
+	CString strData;
+	m_editArrayData.GetWindowTextA(strData);	
+
+	CString strFeedPath;
+	m_editFeederPath.GetWindowTextA(strFeedPath);
+	if( strFeedPath.IsEmpty() == FALSE )
+	{
+		// read last string
+		CString last_row = ReadLastString(strFeedPath);				
+		strData += "\r\n";
+		strData += last_row;
+		strData.Replace("\r\n\r\n", "\r\n");
+
+		m_editArrayData.SetWindowTextA(strData);
+	}
+
+	int row = 0, col = 0;
+	BYTE **x = parseInputData(strData, row, col);
+
+	if( x == NULL )
+	{
+		MessageBox(_T("Input Data Error"), _T("Error"), MB_ICONERROR);
+		return;
+	}
+
+	CString buffer;
+	m_editUpto.GetWindowTextA(buffer);
+
+	int upto = _ttoi(buffer.GetBuffer(0));
+	if( upto < 1 )
+		upto = 4;
+
+	CString ret = calcPathWithCompact(x, row, col, upto);
+
+	m_editResult.SetWindowTextA(ret);
+
+	SaveResult();
+
+	// Free Memeory
+	for(int i = 0; i < row; i++)
+		free(x[i]);
+	free(x);
 }

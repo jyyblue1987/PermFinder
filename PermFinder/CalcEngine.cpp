@@ -199,6 +199,96 @@ int calcBestPath1(BYTE **x, int b, int t, unsigned long long &p_count, BYTE *max
 
 	return max_len;
 }
+int calcBestPathHistogram(BYTE **x, int b, int t, unsigned long long &p_count, int **end_missed_hist, int digit_count, int max_number, int max_row_count)
+{
+	int i = 0, j = 0;
+	unsigned long long k = 0;
+	int val = 0;
+	int hist[4];
+	BYTE missed_value = 255;
+
+	int max_len = 0;
+	int len = 0;
+
+	int pos = digit_count - 1;
+	BYTE *pp = (BYTE *) calloc(digit_count, sizeof(BYTE));
+
+	for(i = 0; i < digit_count; i++)
+		pp[i] = 1;
+
+	pp[digit_count - 1] = 0;
+
+	while(true)
+	{
+		if( pos < 0 )
+			break;
+
+		if( pp[pos] < max_number )
+		{
+			pp[pos]++;
+			if(pos < digit_count - 1)
+				pos++;
+			else
+			{
+				if( pp[0] == 6 && pp[1] == 2 && pp[2] == 11 )
+					pp[0] = 6;
+
+				// main process
+				missed_value = 255;
+				memset(hist, 0, 4 * sizeof(int));
+				for(i = b - 1, j = 0; i >= t - 1; i--, j++ )
+				{	
+					val = x[i][pp[j % digit_count] - 1];
+					hist[val]++;
+
+					BYTE bin_value = 255;
+					for(int q = 1; q <= 3; q++)
+					{
+						if( hist[q] == 0 )
+						{
+							bin_value = q;
+							break;
+						}
+					}
+
+					if( bin_value == 255 )
+						break;
+
+					missed_value = bin_value;
+
+					len = j + 1;
+				}
+
+				if( len > max_len )
+				{
+					p_count = 0;
+
+					for(i = 0; i < 3; i++)
+						memset(end_missed_hist[i], 0, max_number * sizeof(int));
+
+					end_missed_hist[missed_value - 1][pp[digit_count - 1] - 1]++;
+
+					max_len = len;
+					p_count++;
+				}
+				else if( len >= max_len && len > 0 )
+				{
+					end_missed_hist[missed_value - 1][pp[digit_count - 1] - 1]++;
+					p_count++;
+				}
+			}
+		}
+		else
+		{
+			pp[pos] = 0;
+			pos--;
+		}
+	}
+
+	free(pp);
+
+	return max_len;
+}
 
 CString calcPath(BYTE **x, int row, int col, int upto)
 {
@@ -338,6 +428,82 @@ CString calcPathTesting(BYTE **x, int row, int col, int start_row, int upto)
 
 	ret += "\r\n---Total Time: ";
 	float gap = (float)(end - start) / 1000;
+	msg.Format("%1.2fs", gap);
+	ret += msg;	
+
+	return ret;
+}
+
+CString calcPathWithCompact(BYTE **x, int row, int col, int upto)
+{
+	CString ret;
+
+	int i = 0, j = 0, k = 0;
+
+	DWORD  start = GetTickCount();
+
+	int *end_missed_hist[3];
+	for(i = 0;  i < 3; i++)
+		end_missed_hist[i] = (int *) calloc(col, sizeof(int));
+
+	for(k = upto; k >= 3; k--)
+	{
+		unsigned long long PERM_TOTAL_COUNT  = 1;
+
+		for(i = 0; i < k; i++)
+			PERM_TOTAL_COUNT *= col;
+
+		// initialize result buffer
+		for(i = 0;  i < 3; i++)
+			memset(end_missed_hist[i], 0, col * sizeof(int));
+
+		// generate possible permutation list
+		unsigned  long  long count = 0;
+		int max_len = calcBestPathHistogram(x, row, 1, count, end_missed_hist, k, col, MAX_PERM_COUNT);
+
+		CString msg;
+		msg.Format("------------------------------------------------------------\r\n-Digits: %d\r\n", k);
+		ret += msg;
+
+		CString sub_ret;
+		int max_perm_count = count;
+
+		for( i = 0; i < 3; i++)
+		{
+			for(j = 0; j < col; j++)
+			{
+				if(end_missed_hist[i][j] > 0)
+				{
+					msg.Format("\r\n(Number of permutations ending in %d: %d\r\nMissing number: %d",
+							j + 1, end_missed_hist[i][j], i + 1);
+					sub_ret += msg;
+				}
+			}
+		}
+		
+		msg.Format("\r\nMax Length: %d", max_len);		
+		ret += msg;
+
+		float fHeight = (float)max_len / k;
+		msg.Format("\r\nHeight: %1.2f", fHeight );
+		ret += msg;
+
+		msg.Format("\r\nTotal Count: %d", max_perm_count);		
+		ret += msg;
+		ret += "\r\n";
+		ret += sub_ret;
+
+		ret += "\r\n";
+	}
+
+	for(i = 0; i < 3; i++)
+		free(end_missed_hist[i]);
+
+	DWORD  end = GetTickCount();
+
+	ret += "---Total Time: ";
+	float gap = (float)(end - start) / 1000;
+	CString msg;
 	msg.Format("%1.2fs", gap);
 	ret += msg;	
 

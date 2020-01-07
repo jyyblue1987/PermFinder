@@ -48,4 +48,5 @@ public:
 	CEdit m_editFeederPath;
 	afx_msg void OnBnClickedBtnFeederBrowser();
 	afx_msg void OnBnClickedBtnCalcTesting();
+	afx_msg void OnBnClickedBtnCalcCompact();
 };
