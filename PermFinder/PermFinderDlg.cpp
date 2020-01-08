@@ -47,6 +47,7 @@ BEGIN_MESSAGE_MAP(CPermFinderDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BTN_FEEDER_BROWSER, &CPermFinderDlg::OnBnClickedBtnFeederBrowser)	
 	ON_BN_CLICKED(IDC_BTN_CALC_TESTING, &CPermFinderDlg::OnBnClickedBtnCalcTesting)
 	ON_BN_CLICKED(IDC_BTN_CALC_COMPACT, &CPermFinderDlg::OnBnClickedBtnCalcCompact)
+	ON_BN_CLICKED(IDC_BTN_CALC_LENTOTAL, &CPermFinderDlg::OnBnClickedBtnCalcLentotal)
 END_MESSAGE_MAP()
 
 
@@ -388,6 +389,62 @@ void CPermFinderDlg::OnBnClickedBtnCalcCompact()
 		upto = 4;
 
 	CString ret = calcPathWithCompact(x, row, col, upto);
+
+	m_editResult.SetWindowTextA(ret);
+
+	SaveResult();
+
+	// Free Memeory
+	for(int i = 0; i < row; i++)
+		free(x[i]);
+	free(x);
+}
+
+
+void CPermFinderDlg::OnBnClickedBtnCalcLentotal()
+{
+	// TODO: Add your control notification handler code here
+	CString strData;
+	m_editArrayData.GetWindowTextA(strData);	
+
+	int row1 = 0, col1 = 0;
+	BYTE **x = parseInputData(strData, row1, col1);
+
+	if( x == NULL )
+	{
+		MessageBox(_T("Input Data Error"), _T("Error"), MB_ICONERROR);
+		return;
+	}
+
+	// Free Memeory
+	for(int i = 0; i < row1; i++)
+		free(x[i]);
+	free(x);
+
+	CString strFeedPath;
+	m_editFeederPath.GetWindowTextA(strFeedPath);
+	CString strFeedData = GetArrayData(strFeedPath);
+
+	CString totalData = strData + "\r\n" + strFeedData;
+	totalData.Replace("\r\n\r\n", "\r\n");
+
+	int row = 0, col = 0;
+	x = parseInputData(totalData, row, col);
+
+	if( x == NULL )
+	{
+		MessageBox(_T("Input Data Error"), _T("Error"), MB_ICONERROR);
+		return;
+	}
+
+	CString buffer;
+	m_editUpto.GetWindowTextA(buffer);
+
+	int upto = _ttoi(buffer.GetBuffer(0));
+	if( upto < 1 )
+		upto = 4;
+
+	CString ret = calcPathMaxLenTotal(x, row, col, row1, upto);
 
 	m_editResult.SetWindowTextA(ret);
 

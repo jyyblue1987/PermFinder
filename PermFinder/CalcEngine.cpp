@@ -199,7 +199,7 @@ int calcBestPath1(BYTE **x, int b, int t, unsigned long long &p_count, BYTE *max
 
 	return max_len;
 }
-int calcBestPathHistogram(BYTE **x, int b, int t, unsigned long long &p_count, int **end_missed_hist, int digit_count, int max_number, int max_row_count)
+int calcBestPathHistogram(BYTE **x, int b, int t, unsigned long long &p_count, int **end_missed_hist, int digit_count, int max_number)
 {
 	int i = 0, j = 0;
 	unsigned long long k = 0;
@@ -274,6 +274,91 @@ int calcBestPathHistogram(BYTE **x, int b, int t, unsigned long long &p_count, i
 				else if( len >= max_len && len > 0 )
 				{
 					end_missed_hist[missed_value - 1][pp[digit_count - 1] - 1]++;
+					p_count++;
+				}
+			}
+		}
+		else
+		{
+			pp[pos] = 0;
+			pos--;
+		}
+	}
+
+	free(pp);
+
+	return max_len;
+}
+
+int calcBestPathLenCount(BYTE **x, int b, int t, unsigned long long &p_count, int digit_count, int max_number)
+{
+	int i = 0, j = 0;
+	unsigned long long k = 0;
+	int val = 0;
+	int hist[4];
+	BYTE missed_value = 255;
+
+	int max_len = 0;
+	int len = 0;
+
+	int pos = digit_count - 1;
+	BYTE *pp = (BYTE *) calloc(digit_count, sizeof(BYTE));
+
+	for(i = 0; i < digit_count; i++)
+		pp[i] = 1;
+
+	pp[digit_count - 1] = 0;
+
+	while(true)
+	{
+		if( pos < 0 )
+			break;
+
+		if( pp[pos] < max_number )
+		{
+			pp[pos]++;
+			if(pos < digit_count - 1)
+				pos++;
+			else
+			{
+				if( pp[0] == 6 && pp[1] == 2 && pp[2] == 11 )
+					pp[0] = 6;
+
+				// main process
+				missed_value = 255;
+				memset(hist, 0, 4 * sizeof(int));
+				for(i = b - 1, j = 0; i >= t - 1; i--, j++ )
+				{	
+					val = x[i][pp[j % digit_count] - 1];
+					hist[val]++;
+
+					BYTE bin_value = 255;
+					for(int q = 1; q <= 3; q++)
+					{
+						if( hist[q] == 0 )
+						{
+							bin_value = q;
+							break;
+						}
+					}
+
+					if( bin_value == 255 )
+						break;
+
+					missed_value = bin_value;
+
+					len = j + 1;
+				}
+
+				if( len > max_len )
+				{
+					p_count = 0;
+
+					max_len = len;
+					p_count++;
+				}
+				else if( len >= max_len && len > 0 )
+				{					
 					p_count++;
 				}
 			}
@@ -459,7 +544,7 @@ CString calcPathWithCompact(BYTE **x, int row, int col, int upto)
 
 		// generate possible permutation list
 		unsigned  long  long count = 0;
-		int max_len = calcBestPathHistogram(x, row, 1, count, end_missed_hist, k, col, MAX_PERM_COUNT);
+		int max_len = calcBestPathHistogram(x, row, 1, count, end_missed_hist, k, col);
 
 		CString msg;
 		msg.Format("------------------------------------------------------------\r\n-Digits: %d\r\n", k);
@@ -504,6 +589,44 @@ CString calcPathWithCompact(BYTE **x, int row, int col, int upto)
 	ret += "---Total Time: ";
 	float gap = (float)(end - start) / 1000;
 	CString msg;
+	msg.Format("%1.2fs", gap);
+	ret += msg;	
+
+	return ret;
+}
+
+CString calcPathMaxLenTotal(BYTE **x, int row, int col, int start_row, int upto)
+{
+	CString ret;
+	CString msg;
+
+	int i = 0, j = 0, k = 0;
+
+	DWORD  start = GetTickCount();
+
+	for(k = upto; k <= upto; k++)
+	{
+		ret += "-----------------------------------------------------------------------\r\n";
+		msg.Format("%d-plets", k);
+		ret += msg;
+
+		for(int r = start_row; r < row; r++)
+		{
+			// generate possible permutation list
+			unsigned  long  long count = 0;
+			int max_len = calcBestPathLenCount(x, r + 1, 1, count, k, col);		
+
+			msg.Format("\r\n%d)  %d         %d", r - start_row + 1, max_len, count);
+			ret += msg;
+		}
+
+		ret += "\r\n";
+	}
+
+	DWORD  end = GetTickCount();
+
+	ret += "\r\n---Total Time: ";
+	float gap = (float)(end - start) / 1000;
 	msg.Format("%1.2fs", gap);
 	ret += msg;	
 

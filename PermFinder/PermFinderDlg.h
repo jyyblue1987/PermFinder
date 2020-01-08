@@ -49,4 +49,5 @@ public:
 	afx_msg void OnBnClickedBtnFeederBrowser();
 	afx_msg void OnBnClickedBtnCalcTesting();
 	afx_msg void OnBnClickedBtnCalcCompact();
+	afx_msg void OnBnClickedBtnCalcLentotal();
 };
