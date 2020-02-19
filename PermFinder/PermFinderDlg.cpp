@@ -80,6 +80,23 @@ void CPermFinderDlg::ReadSavePath()
 	TCHAR *p = _tcsrchr(szExePath, _T('\\'));
 	if( p != NULL )
 	{
+		_tcscpy(p + 1, "array.txt");
+		m_editArrayPath.SetWindowText(ReadLastString(szExePath));
+
+		CString szFilePath;
+		m_editArrayPath.GetWindowText(szFilePath);
+		if( szFilePath.IsEmpty() == FALSE )
+		{
+			CString result = GetArrayData(szFilePath);
+			m_editArrayData.SetWindowTextA(result);
+
+			ScrollDown(&m_editArrayData);
+		}
+		
+		
+		_tcscpy(p + 1, "feeder.txt");
+		m_editFeederPath.SetWindowText(ReadLastString(szExePath));
+
 		_tcscpy(p + 1, "main.txt");
 		m_editSavePath.SetWindowText(ReadLastString(szExePath));
 
@@ -218,6 +235,8 @@ void CPermFinderDlg::OnBnClickedBtnArray()
 		m_editArrayData.SetWindowTextA(result);
 
 		ScrollDown(&m_editArrayData);
+
+		WriteSettingValue("array.txt", sFilePath);
 	}
 }
 
@@ -268,7 +287,23 @@ void CPermFinderDlg::OnBnClickedBtnCalc()
 	free(x);
 }
 
+void CPermFinderDlg::WriteSettingValue(CString name, CString val)
+{
+	CStdioFile file;
+	TCHAR szExePath[256] = ""; 
+	GetModuleFileName(NULL, szExePath, 256);
+	TCHAR *p = _tcsrchr(szExePath, _T('\\'));
+	if( p != NULL )
+	{
+		_tcscpy(p + 1, name);
+		if(file.Open(szExePath, CFile::modeCreate|CFile::modeWrite))
+		{				
+			file.WriteString(val);
+			file.Close();
+		}
+	}		
 
+}
 void CPermFinderDlg::OnBnClickedBtnSave()
 {
 	const TCHAR szFilter[] = _T("Text Files (*.txt)|*.txt|All Files (*.*)|*.*||");
@@ -278,19 +313,7 @@ void CPermFinderDlg::OnBnClickedBtnSave()
 		CString sFilePath = dlg.GetPathName();
 		m_editSavePath.SetWindowText(sFilePath);
 
-		CStdioFile file;
-		TCHAR szExePath[256] = ""; 
-		GetModuleFileName(NULL, szExePath, 256);
-		TCHAR *p = _tcsrchr(szExePath, _T('\\'));
-		if( p != NULL )
-		{
-			_tcscpy(p + 1, "main.txt");
-			if(file.Open(szExePath, CFile::modeCreate|CFile::modeWrite|CFile::modeNoTruncate))
-			{				
-				file.WriteString(sFilePath);
-				file.Close();
-			}
-		}		
+		WriteSettingValue("main.txt", sFilePath);		
 	}
 }
 
@@ -310,6 +333,8 @@ void CPermFinderDlg::OnBnClickedBtnFeederBrowser()
 	{
 		CString sFilePath = dlg.GetPathName();
 		m_editFeederPath.SetWindowText(sFilePath);		
+
+		WriteSettingValue("feeder.txt", sFilePath);
 	}
 }
 
@@ -391,9 +416,9 @@ void CPermFinderDlg::SaveResult()
 	
 	if( path.IsEmpty() == false )
 	{
-		if(file.Open(path, CFile::modeCreate|CFile::modeWrite|CFile::modeNoTruncate))
+		if(file.Open(path, CFile::modeCreate|CFile::modeWrite))
 		{
-			file.SeekToEnd();
+			//file.SeekToEnd();
 			file.WriteString(strResult);
 			file.Close();
 		}
@@ -404,9 +429,9 @@ void CPermFinderDlg::SaveResult()
 
 	if( path.IsEmpty() == false )
 	{
-		if(file.Open(path, CFile::modeCreate|CFile::modeWrite|CFile::modeNoTruncate))
+		if(file.Open(path, CFile::modeCreate|CFile::modeWrite))
 		{
-			file.SeekToEnd();
+			//file.SeekToEnd();
 			file.WriteString(strResult);
 			file.Close();
 		}
@@ -536,19 +561,7 @@ void CPermFinderDlg::OnBnClickedBtnSummary()
 		CString sFilePath = dlg.GetPathName();
 		m_editSummaryPath.SetWindowText(sFilePath);
 
-		CStdioFile file;
-		TCHAR szExePath[256] = ""; 
-		GetModuleFileName(NULL, szExePath, 256);
-		TCHAR *p = _tcsrchr(szExePath, _T('\\'));
-		if( p != NULL )
-		{
-			_tcscpy(p + 1, "summary.txt");
-			if(file.Open(szExePath, CFile::modeCreate|CFile::modeWrite|CFile::modeNoTruncate))
-			{			
-				file.WriteString(sFilePath);
-				file.Close();
-			}
-		}		
+		WriteSettingValue("summary.txt", sFilePath);		
 	}
 }
 

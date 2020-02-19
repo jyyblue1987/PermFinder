@@ -44,6 +44,7 @@ private:
 	CString ReadLastString(CString path);
 	void	SaveResult();
 	void	ScrollDown(CEdit *pEdit);
+	void	WriteSettingValue(CString name, CString val);
 
 public:
 	afx_msg void OnBnClickedBtnCalc();
