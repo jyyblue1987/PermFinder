@@ -52,4 +52,6 @@ public:
 	afx_msg void OnBnClickedBtnCalcLentotal();
 	CEdit m_txtFrom;
 	CEdit m_txtSummaryReport;
+	CEdit m_editSummaryPath;
+	afx_msg void OnBnClickedBtnSummary();
 };

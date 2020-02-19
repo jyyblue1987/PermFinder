@@ -37,6 +37,7 @@ void CPermFinderDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_EDIT_FEEDER_PATH, m_editFeederPath);
 	DDX_Control(pDX, IDC_EDIT_FROM, m_txtFrom);
 	DDX_Control(pDX, IDC_EDIT_SUMMRY_REPORT, m_txtSummaryReport);
+	DDX_Control(pDX, IDC_EDIT_SUMMARY_PATH, m_editSummaryPath);
 }
 
 BEGIN_MESSAGE_MAP(CPermFinderDlg, CDialogEx)
@@ -44,12 +45,12 @@ BEGIN_MESSAGE_MAP(CPermFinderDlg, CDialogEx)
 	ON_WM_QUERYDRAGICON()
 	ON_BN_CLICKED(IDC_BTN_ARRAY, &CPermFinderDlg::OnBnClickedBtnArray)
 	ON_BN_CLICKED(IDC_BTN_CALC, &CPermFinderDlg::OnBnClickedBtnCalc)
-	ON_BN_CLICKED(IDC_BTN_SAVE, &CPermFinderDlg::OnBnClickedBtnSave)
-	ON_BN_CLICKED(IDC_BTN_CLOSE, &CPermFinderDlg::OnBnClickedBtnClose)
+	ON_BN_CLICKED(IDC_BTN_SAVE, &CPermFinderDlg::OnBnClickedBtnSave)	
 	ON_BN_CLICKED(IDC_BTN_FEEDER_BROWSER, &CPermFinderDlg::OnBnClickedBtnFeederBrowser)	
 	ON_BN_CLICKED(IDC_BTN_CALC_TESTING, &CPermFinderDlg::OnBnClickedBtnCalcTesting)
 	ON_BN_CLICKED(IDC_BTN_CALC_COMPACT, &CPermFinderDlg::OnBnClickedBtnCalcCompact)
 	ON_BN_CLICKED(IDC_BTN_CALC_LENTOTAL, &CPermFinderDlg::OnBnClickedBtnCalcLentotal)
+	ON_BN_CLICKED(IDC_BTN_SUMMARY, &CPermFinderDlg::OnBnClickedBtnSummary)
 END_MESSAGE_MAP()
 
 
@@ -340,12 +341,6 @@ void CPermFinderDlg::SaveResult()
 	CString strResult;
 	m_editResult.GetWindowTextA(strResult);
 
-	CString path;
-	m_editSavePath.GetWindowText(path);
-
-	if( strResult.IsEmpty() || path.IsEmpty() )
-		return;
-
 	CString strSummary;
 	m_txtSummaryReport.GetWindowTextA(strSummary);
 
@@ -355,13 +350,35 @@ void CPermFinderDlg::SaveResult()
 		strResult += strSummary;
 	}
 	
+	if( strResult.IsEmpty() )
+		return;
+
 	CStdioFile file;
 
-	if(file.Open(path, CFile::modeCreate|CFile::modeWrite|CFile::modeNoTruncate))
+	CString path;
+	m_editSavePath.GetWindowText(path);
+	
+	if( path.IsEmpty() == false )
 	{
-		file.SeekToEnd();
-		file.WriteString(strResult);
-		file.Close();
+		if(file.Open(path, CFile::modeCreate|CFile::modeWrite|CFile::modeNoTruncate))
+		{
+			file.SeekToEnd();
+			file.WriteString(strResult);
+			file.Close();
+		}
+	}
+
+
+	m_editSummaryPath.GetWindowText(path);
+
+	if( path.IsEmpty() == false )
+	{
+		if(file.Open(path, CFile::modeCreate|CFile::modeWrite|CFile::modeNoTruncate))
+		{
+			file.SeekToEnd();
+			file.WriteString(strResult);
+			file.Close();
+		}
 	}
 }
 
@@ -474,4 +491,16 @@ void CPermFinderDlg::OnBnClickedBtnCalcLentotal()
 	for(int i = 0; i < row; i++)
 		free(x[i]);
 	free(x);
+}
+
+
+void CPermFinderDlg::OnBnClickedBtnSummary()
+{
+	const TCHAR szFilter[] = _T("Text Files (*.txt)|*.txt|All Files (*.*)|*.*||");
+	CFileDialog dlg(FALSE, _T("csv"), NULL, OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, szFilter, this);    
+	if(dlg.DoModal() == IDOK)
+	{
+		CString sFilePath = dlg.GetPathName();
+		m_editSummaryPath.SetWindowText(sFilePath);
+	}
 }
