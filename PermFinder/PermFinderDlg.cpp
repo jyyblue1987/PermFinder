@@ -216,6 +216,8 @@ void CPermFinderDlg::OnBnClickedBtnArray()
 		m_editArrayPath.SetWindowText(sFilePath);
 		CString result = GetArrayData(sFilePath);
 		m_editArrayData.SetWindowTextA(result);
+
+		ScrollDown(&m_editArrayData);
 	}
 }
 
@@ -458,6 +460,8 @@ void CPermFinderDlg::OnBnClickedBtnCalcCompact()
 	m_editResult.SetWindowTextA(ret);
 	m_txtSummaryReport.SetWindowTextA(summary);
 
+	ScrollDown(&m_txtSummaryReport);
+
 	SaveResult();
 
 	// Free Memeory
@@ -546,4 +550,16 @@ void CPermFinderDlg::OnBnClickedBtnSummary()
 			}
 		}		
 	}
+}
+
+void CPermFinderDlg::ScrollDown(CEdit *pEdit)
+{
+	int iLastLine;
+
+	//Get the number of lines so far
+	iLastLine = pEdit->GetLineCount();
+
+	//Scroll to the last line
+	pEdit->LineScroll(iLastLine);
+	UpdateData(FALSE);
 }

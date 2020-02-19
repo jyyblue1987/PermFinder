@@ -43,6 +43,7 @@ private:
 	CString GetArrayData(CString path);
 	CString ReadLastString(CString path);
 	void	SaveResult();
+	void	ScrollDown(CEdit *pEdit);
 
 public:
 	afx_msg void OnBnClickedBtnCalc();
