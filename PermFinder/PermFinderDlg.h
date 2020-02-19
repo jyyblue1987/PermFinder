@@ -50,4 +50,6 @@ public:
 	afx_msg void OnBnClickedBtnCalcTesting();
 	afx_msg void OnBnClickedBtnCalcCompact();
 	afx_msg void OnBnClickedBtnCalcLentotal();
+	CEdit m_txtFrom;
+	CEdit m_txtSummaryReport;
 };

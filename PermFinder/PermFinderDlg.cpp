@@ -35,6 +35,8 @@ void CPermFinderDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_EDIT_RESULT_DATA, m_editResult);
 	DDX_Control(pDX, IDC_EDIT_UP_TO, m_editUpto);
 	DDX_Control(pDX, IDC_EDIT_FEEDER_PATH, m_editFeederPath);
+	DDX_Control(pDX, IDC_EDIT_FROM, m_txtFrom);
+	DDX_Control(pDX, IDC_EDIT_SUMMRY_REPORT, m_txtSummaryReport);
 }
 
 BEGIN_MESSAGE_MAP(CPermFinderDlg, CDialogEx)
@@ -63,7 +65,8 @@ BOOL CPermFinderDlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// Set small icon
 
 	// TODO: Add extra initialization here
-	m_editUpto.SetWindowTextA("9");
+	m_txtFrom.SetWindowTextA("7");
+	m_editUpto.SetWindowTextA("10");
 
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
@@ -343,7 +346,15 @@ void CPermFinderDlg::SaveResult()
 	if( strResult.IsEmpty() || path.IsEmpty() )
 		return;
 
+	CString strSummary;
+	m_txtSummaryReport.GetWindowTextA(strSummary);
 
+	if( strSummary.IsEmpty() == false )
+	{
+		strResult += "\r\n\r\n\r\nSummary Report\r\n\r\n";
+		strResult += strSummary;
+	}
+	
 	CStdioFile file;
 
 	if(file.Open(path, CFile::modeCreate|CFile::modeWrite|CFile::modeNoTruncate))
@@ -388,9 +399,17 @@ void CPermFinderDlg::OnBnClickedBtnCalcCompact()
 	if( upto < 1 )
 		upto = 4;
 
-	CString ret = calcPathWithCompact(x, row, col, upto);
+	m_txtFrom.GetWindowTextA(buffer);
+	int from = _ttoi(buffer.GetBuffer(0));
+	if( from < 3 )
+		from = 3;
+
+	CString summary;
+
+	CString ret = calcPathWithCompact(x, row, col, from, upto, summary);
 
 	m_editResult.SetWindowTextA(ret);
+	m_txtSummaryReport.SetWindowTextA(summary);
 
 	SaveResult();
 

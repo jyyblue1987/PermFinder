@@ -519,7 +519,7 @@ CString calcPathTesting(BYTE **x, int row, int col, int start_row, int upto)
 	return ret;
 }
 
-CString calcPathWithCompact(BYTE **x, int row, int col, int upto)
+CString calcPathWithCompact(BYTE **x, int row, int col, int from, int upto, CString &summary)
 {
 	CString ret;
 
@@ -531,8 +531,10 @@ CString calcPathWithCompact(BYTE **x, int row, int col, int upto)
 	for(i = 0;  i < 3; i++)
 		end_missed_hist[i] = (int *) calloc(col, sizeof(int));
 
-	for(k = upto; k >= 3; k--)
-	{
+	CString header = "";
+	CString value_str = "";
+	for(k = upto; k >= from; k--)
+	{	
 		unsigned long long PERM_TOTAL_COUNT  = 1;
 
 		for(i = 0; i < k; i++)
@@ -579,7 +581,16 @@ CString calcPathWithCompact(BYTE **x, int row, int col, int upto)
 		ret += sub_ret;
 
 		ret += "\r\n";
+
+		msg.Format("D%d\t", k);
+		header = msg + header;
+
+		msg.Format("%d %d\t", max_len, max_perm_count);
+		value_str = msg + value_str;
 	}
+
+	summary += header + "\r\n";
+	summary += value_str + "\r\n";
 
 	for(i = 0; i < 3; i++)
 		free(end_missed_hist[i]);
