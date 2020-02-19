@@ -68,10 +68,25 @@ BOOL CPermFinderDlg::OnInitDialog()
 	// TODO: Add extra initialization here
 	m_txtFrom.SetWindowTextA("7");
 	m_editUpto.SetWindowTextA("10");
+	ReadSavePath();
 
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
 
+void CPermFinderDlg::ReadSavePath()
+{
+	TCHAR szExePath[256] = ""; 
+	GetModuleFileName(NULL, szExePath, 256);
+	TCHAR *p = _tcsrchr(szExePath, _T('\\'));
+	if( p != NULL )
+	{
+		_tcscpy(p + 1, "main.txt");
+		m_editSavePath.SetWindowText(ReadLastString(szExePath));
+
+		_tcscpy(p + 1, "summary.txt");
+		m_editSummaryPath.SetWindowText(ReadLastString(szExePath));
+	}		
+}
 // If you add a minimize button to your dialog, you will need the code below
 //  to draw the icon.  For MFC applications using the document/view model,
 //  this is automatically done for you by the framework.
@@ -260,6 +275,20 @@ void CPermFinderDlg::OnBnClickedBtnSave()
 	{
 		CString sFilePath = dlg.GetPathName();
 		m_editSavePath.SetWindowText(sFilePath);
+
+		CStdioFile file;
+		TCHAR szExePath[256] = ""; 
+		GetModuleFileName(NULL, szExePath, 256);
+		TCHAR *p = _tcsrchr(szExePath, _T('\\'));
+		if( p != NULL )
+		{
+			_tcscpy(p + 1, "main.txt");
+			if(file.Open(szExePath, CFile::modeCreate|CFile::modeWrite|CFile::modeNoTruncate))
+			{				
+				file.WriteString(sFilePath);
+				file.Close();
+			}
+		}		
 	}
 }
 
@@ -502,5 +531,19 @@ void CPermFinderDlg::OnBnClickedBtnSummary()
 	{
 		CString sFilePath = dlg.GetPathName();
 		m_editSummaryPath.SetWindowText(sFilePath);
+
+		CStdioFile file;
+		TCHAR szExePath[256] = ""; 
+		GetModuleFileName(NULL, szExePath, 256);
+		TCHAR *p = _tcsrchr(szExePath, _T('\\'));
+		if( p != NULL )
+		{
+			_tcscpy(p + 1, "summary.txt");
+			if(file.Open(szExePath, CFile::modeCreate|CFile::modeWrite|CFile::modeNoTruncate))
+			{			
+				file.WriteString(sFilePath);
+				file.Close();
+			}
+		}		
 	}
 }

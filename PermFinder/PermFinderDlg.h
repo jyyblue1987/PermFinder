@@ -38,9 +38,12 @@ public:
 	CEdit m_editUpto;
 
 private:
+	void	ReadSavePath();
+
 	CString GetArrayData(CString path);
 	CString ReadLastString(CString path);
 	void	SaveResult();
+
 public:
 	afx_msg void OnBnClickedBtnCalc();
 	afx_msg void OnBnClickedBtnSave();
