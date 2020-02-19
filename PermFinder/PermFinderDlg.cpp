@@ -404,7 +404,8 @@ void CPermFinderDlg::OnBnClickedBtnCalcCompact()
 	if( from < 3 )
 		from = 3;
 
-	CString summary;
+	CString summary;	
+	m_txtSummaryReport.GetWindowTextA(summary);
 
 	CString ret = calcPathWithCompact(x, row, col, from, upto, summary);
 

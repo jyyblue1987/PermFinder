@@ -585,11 +585,13 @@ CString calcPathWithCompact(BYTE **x, int row, int col, int from, int upto, CStr
 		msg.Format("D%d\t", k);
 		header = msg + header;
 
-		msg.Format("%d %d\t", max_len, max_perm_count);
+		msg.Format("%d----%d\t", max_len, max_perm_count);
 		value_str = msg + value_str;
 	}
 
-	summary += header + "\r\n";
+	if( summary.IsEmpty() )
+		summary += header + "\r\n";
+
 	summary += value_str + "\r\n";
 
 	for(i = 0; i < 3; i++)
