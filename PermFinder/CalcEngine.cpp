@@ -582,10 +582,10 @@ CString calcPathWithCompact(BYTE **x, int row, int col, int from, int upto, CStr
 
 		ret += "\r\n";
 
-		msg.Format("D%d\t", k);
+		msg.Format("  D%d\t", k);
 		header = msg + header;
 
-		msg.Format("%d----%d\t", max_len, max_perm_count);
+		msg.Format("  %d----%d\t", max_len, max_perm_count);
 		value_str = msg + value_str;
 	}
 
